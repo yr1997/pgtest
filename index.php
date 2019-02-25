@@ -6,7 +6,7 @@ $sql = null;
 
 try {
 	// データベースと接続
-	$pdo_conn = new PDO( 'pgsql:host=ec2-23-21-165-188.compute-1.amazonaws.com; dbname=d81tl9ncnqmhr0;', 'gyuzauumvdcvqw', 't0f44482e44311c9eaf16bb24ab22a891a521054e81c4215ef53a2592e2e3de1b' );	
+	$pdo_conn = new PDO( 'pgsql:host=ec2-23-21-165-188.compute-1.amazonaws.com; dbname=d81tl9ncnqmhr0;', 'gyuzauumvdcvqw', '0f44482e44311c9eaf16bb24ab22a891a521054e81c4215ef53a2592e2e3de1b' );	
 
 	// テーブル作成のためのSQL
 	$sql = "CREATE TABLE menu (

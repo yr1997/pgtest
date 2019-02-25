@@ -1,31 +1,101 @@
-<?php
+<!DOCTYPE html>
+<html lang="ja">
 
-// 変数の初期化
-$sql = null;
-$res = null;
-$dbh = null;
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>paiza掲示板</title>
+	<!-- bootstrap CDN -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<style type=text/css>
+		div#main {
+			padding: 30px;
+			background-color: #efefef;
+		}
+	</style>
+</head>
 
-try {
-	// DBへ接続
-	$dbh = new PDO( 'pgsql:host=ec2-23-21-165-188.compute-1.amazonaws.com; dbname=d81tl9ncnqmhr0;', 'gyuzauumvdcvqw', '0f44482e44311c9eaf16bb24ab22a891a521054e81c4215ef53a2592e2e3de1b' );
-	// SQL作成
-	$sql = "SELECT * FROM user_list";
+<body>
+	<div class="container">
+		<div id="main">
+			<?php
+			// データベースに接続する
+			$pdo = new PDO( 'pgsql:host=ec2-23-21-165-188.compute-1.amazonaws.com; dbname=d81tl9ncnqmhr0;', 'gyuzauumvdcvqw', '0f44482e44311c9eaf16bb24ab22a891a521054e81c4215ef53a2592e2e3de1b' );
+			// print_r($_POST);
 
-	// SQL実行
-	$res = $dbh->query($sql);
+			// 受け取ったidのレコードの削除
+			if (isset($_POST["delete_id"])) {
+				$delete_id = $_POST["delete_id"];
+				$sql  = "DELETE FROM bbs WHERE id = :delete_id;";
+				$stmt = $pdo->prepare($sql);
+				$stmt -> bindValue(":delete_id", $delete_id, PDO::PARAM_INT);
+				$stmt -> execute();
+			}
 
-	// 取得したデータを出力
-	foreach( $res as $value ) {
-		echo "$value[name]<br>";
-	}
+			// 受け取ったデータを書き込む
+			if (isset($_POST["content"]) && isset($_POST["user_name"])) {
+				$content   = $_POST["content"];
+				$user_name = $_POST["user_name"];
+				$sql  = "INSERT INTO bbs (content, user_name, updated_at) VALUES (:content, :user_name, NOW());";
+				$stmt = $pdo->prepare($sql);
+				$stmt -> bindValue(":content", $content, PDO::PARAM_STR);
+				$stmt -> bindValue(":user_name", $user_name, PDO::PARAM_STR);
+				$stmt -> execute();
+			} ?>
 
-} catch(PDOException $e) {
-	echo $e->getMessage();
-	die();
-}
+			<h1>paiza掲示板</h1>
 
-// 接続を閉じる
-$dbh = null;
+			<h2>投稿フォーム</h2>
+			<form class="form" action="bbs.php" method="post">
+				<div class="form-group">
+					<label class="control-label">投稿内容</label>
+					<input class="form-control" type="text" name="content">
+				</div>
+				<div class="form-group">
+					<label class="control-label">投稿者</label>
+					<input class="form-control" type="text" name="user_name">
+				</div>
+				<button class="btn btn-primary" type="submit">送信</button>
+			</form>
 
+			<h2>発言リスト</h2>
+			<?php
+			// データベースからデータを取得する
+			$sql = "SELECT * FROM bbs ORDER BY updated_at;";
+			$stmt = $pdo->prepare($sql);
+			$stmt -> execute();
+			?>
+			<table class="table table-striped">
+				<tr>
+					<th>id</th>
+					<th>日時</th>
+					<th>投稿内容</th>
+					<th>投稿者</th>
+					<th></th>
+				</tr>
+				<?php
+				// 取得したデータを表示する
+				while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) { ?>
+					<tr>
+						<td><?= $row["id"] ?></td>
+						<td><?= $row["updated_at"] ?></td>
+						<td><?= $row["content"] ?></td>
+						<td><?= $row["user_name"] ?></td>
+						<td>
+							<form action="bbs.php" method="post">
+								<input type="hidden" name="delete_id" value=<?= $row["id"] ?>>
+								<button class="btn btn-danger" type="submit">削除</button>
+							</form>
+						</td>
+					</tr>
+				<?php } ?>
+			</table>
+		</div>
+	</div>
+</body>
+
+</html>
 
 

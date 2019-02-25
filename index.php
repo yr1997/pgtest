@@ -16,6 +16,12 @@ try {
 	modify_datetime date,
 	create_datetime date
 )";
+	
+	$sql = "INSERT INTO menu (
+	id, name, price, modify_datetime, create_datetime
+) VALUES (
+	3, 'ソイラテ', 400, '$date', '$date'	
+)";
 	// SQLクエリ実行
 	$res = $pdo_conn->query( $sql);
 	var_dump($res);
@@ -24,6 +30,16 @@ try {
 
 	var_dump($e->getMessage());
 }
+
+foreach( $res as $value ) {
+		echo "$value[name]<br>";
+	}
+
+} catch(PDOException $e) {
+	echo $e->getMessage();
+	die();
+}
+
 
 // データベースの接続を切断
 $pdo_conn = null;

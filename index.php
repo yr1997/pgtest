@@ -31,14 +31,6 @@ try {
 	var_dump($e->getMessage());
 }
 
-foreach( $res as $value ) {
-		echo "$value[name]<br>";
-	}
-
-} catch(PDOException $e) {
-	echo $e->getMessage();
-	die();
-}
 
 
 // データベースの接続を切断

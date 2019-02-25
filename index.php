@@ -17,11 +17,7 @@ try {
 	create_datetime date
 )";
 	
-	$sql = "INSERT INTO menu (
-	id, name, price, modify_datetime, create_datetime
-) VALUES (
-	3, 'ソイラテ', 400, '$date', '$date'	
-)";
+
 	// SQLクエリ実行
 	$res = $pdo_conn->query( $sql);
 	var_dump($res);

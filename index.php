@@ -17,7 +17,7 @@ try {
 	create_datetime date
 )";
 	
-
+	
 	// SQLクエリ実行
 	$res = $pdo_conn->query( $sql);
 	var_dump($res);
@@ -29,6 +29,8 @@ try {
 
 
 
+
 // データベースの接続を切断
 $pdo_conn = null;
+
 
